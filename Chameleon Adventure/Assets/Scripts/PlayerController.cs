@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro.Examples;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -23,24 +24,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private LayerMask groundLayerMask;
 
-    [Header("Interact")]
-    private InteractableObject interactableObject = null;
-    private bool canInteract = false;
-
-    [Header("Camouflage")]
-    private SpriteRenderer mySpriteRenderer = null;
-    private Color initialColor;
-    private bool isBlue = false;
-    private float blueWaitTime = 5f;
-    private bool isRed = false;
-    private float redWaitTime = 5f;
+    [Header("Spawn")]
+    [SerializeField]
+    private Transform checkpoint;
 
     private void Awake()
     {
         myRigidbody2D = GetComponent<Rigidbody2D>();
         myAnimator = GetComponent<Animator>();
-        mySpriteRenderer = GetComponent<SpriteRenderer>();
-        initialColor = mySpriteRenderer.color;
+    }
+
+    private void Start()
+    {
+        Spawn();
     }
     private void Update()
     {
@@ -56,14 +52,19 @@ public class PlayerController : MonoBehaviour
         {
             jump = true;
         }
+    }
 
-        if (Input.GetKeyDown(KeyCode.E) && canInteract)
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Lower Limit"))
         {
-            if (interactableObject != null)
-            {
-                interactableObject.Interact();
-            }
+            Spawn();
         }
+    }
+
+    private void Spawn()
+    {
+        transform.position = checkpoint.position;
     }
 
     private bool IsGrounded()
@@ -76,60 +77,6 @@ public class PlayerController : MonoBehaviour
             }
         }
         return false;
-    }
-
-    public void ColorRed()
-    {
-        if (isBlue)
-        {
-            CancelInvoke(nameof(DisableColorBlue));
-            isBlue = false;
-        }
-
-        if (isRed == false)
-        {
-            isRed = true;
-            GetComponent<SpriteRenderer>().color = Color.red;
-        }
-        else
-        {
-            CancelInvoke(nameof(DisableColorRed));
-        }
-
-        Invoke(nameof(DisableColorRed), redWaitTime);
-    }
-
-    private void DisableColorRed()
-    {
-        isRed = false;
-        GetComponent<SpriteRenderer>().color = initialColor;
-    }
-
-    public void ColorBlue()
-    {
-        if (isRed)
-        {
-            CancelInvoke(nameof(DisableColorRed));
-            isRed = false;
-        }
-
-        if (isBlue == false)
-        {
-            isBlue = true;
-            GetComponent<SpriteRenderer>().color = Color.blue;
-        }
-        else
-        {
-            CancelInvoke(nameof(DisableColorBlue));
-        }
-
-        Invoke(nameof(DisableColorBlue), blueWaitTime);
-    }
-
-    private void DisableColorBlue()
-    {
-        isBlue = false;
-        GetComponent<SpriteRenderer>().color = initialColor;
     }
 
     private void FixedUpdate()
