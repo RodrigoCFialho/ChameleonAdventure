@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Lower Limit
+  - Door
+  - Spike
   layers:
   - Default
   - TransparentFX
@@ -39,6 +41,12 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Spike
+    uniqueID: 108806233
+    locked: 0
+  - name: Wall
+    uniqueID: 3155369289
+    locked: 0
   - name: Ground
     uniqueID: 2762584271
     locked: 0
